@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal → AI: Карта замены юридических ролей</title>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--card:#13131a;--card-hover:#1a1a24;--border:#1e1e2e;--text:#e8e8f0;--text-sec:#8888a0;--text-muted:#555570;--accent:#6366f1;--accent-light:#818cf8;--green:#10b981;--green-bg:rgba(16,185,129,.08);--orange:#f59e0b;--orange-bg:rgba(245,158,11,.08);--red:#ef4444;--red-bg:rgba(239,68,68,.08);--blue:#3b82f6;--blue-bg:rgba(59,130,246,.08);--purple:#a855f7;--purple-bg:rgba(168,85,247,.08);--yellow:#eab308;--yellow-bg:rgba(234,179,8,.08);--cyan:#06b6d4;--cyan-bg:rgba(6,182,212,.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono',monospace}
+
+.hero{padding:4rem 2rem 2.5rem;max-width:1400px;margin:0 auto;text-align:center}
+.hero-badge{display:inline-block;padding:.35rem 1rem;border:1px solid var(--accent);border-radius:20px;font-size:.75rem;color:var(--accent-light);letter-spacing:.04em;text-transform:uppercase;margin-bottom:2rem}
+.hero h1{font-size:2.8rem;font-weight:900;line-height:1.1;margin-bottom:1rem;background:linear-gradient(135deg,#e8e8f0 0%,#818cf8 50%,#a855f7 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:1.05rem;color:var(--text-sec);max-width:850px;margin:0 auto}
+
+.sec{max-width:1400px;margin:0 auto;padding:3rem 2rem 1rem}
+.sec-label{font-size:.72rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem}
+.sec h2{font-size:2rem;font-weight:800;margin-bottom:.5rem}
+.sec .desc{color:var(--text-sec);font-size:.95rem;margin-bottom:2rem;max-width:800px}
+
+.l0-wrap{max-width:1400px;margin:0 auto;padding:0 2rem 2rem;overflow-x:auto}
+.l0-table{width:100%;border-collapse:collapse;font-size:.84rem}
+.l0-table th{text-align:left;padding:.7rem 1rem;font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);border-bottom:2px solid var(--border);background:rgba(99,102,241,.03);white-space:nowrap}
+.l0-table td{padding:.75rem 1rem;border-bottom:1px solid var(--border);vertical-align:middle}
+.l0-table tr:last-child td{border-bottom:none}
+.l0-table tr:hover td{background:rgba(99,102,241,.03)}
+.l0-table .l0-name{font-weight:700;color:var(--accent-light);white-space:nowrap}
+.l0-table .l0-role{font-size:.78rem;color:var(--text-muted)}
+.l0-table .mono-val{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:.82rem}
+
+.tag{display:inline-block;padding:.15rem .5rem;border-radius:4px;font-size:.7rem;font-weight:600;white-space:nowrap}
+.tag-high{background:var(--green-bg);color:var(--green);border:1px solid rgba(16,185,129,.2)}
+.tag-med{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(234,179,8,.2)}
+.tag-low{background:var(--red-bg);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.35rem;vertical-align:middle}
+.dot-green{background:var(--green)}
+.dot-yellow{background:var(--yellow)}
+.dot-red{background:var(--red)}
+
+.roles-map{max-width:1400px;margin:0 auto;padding:0 2rem 2rem}
+.domain-group{margin-bottom:2rem}
+.domain-label{font-size:.8rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;padding-left:.5rem;display:flex;align-items:center;gap:.6rem}
+.domain-label::before{content:'';width:3px;height:14px;border-radius:2px;flex-shrink:0}
+.domain-label.d-contract::before{background:var(--blue)}
+.domain-label.d-compliance::before{background:var(--orange)}
+.domain-label.d-corporate::before{background:var(--purple)}
+.domain-label.d-litigation::before{background:var(--red)}
+.domain-label.d-ip::before{background:var(--cyan)}
+.domain-label.d-legalops::before{background:var(--green)}
+.roles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.75rem}
+.role-chip{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:.5rem;transition:border-color .2s,transform .15s}
+.role-chip:hover{border-color:rgba(99,102,241,.3);transform:translateY(-1px)}
+.role-chip-top{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.role-chip-name{font-size:.92rem;font-weight:700;color:var(--text)}
+.role-chip-bottom{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.chip-status{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:5px;font-size:.7rem;font-weight:600;white-space:nowrap}
+.cs-active{background:var(--green-bg);color:var(--green);border:1px solid rgba(16,185,129,.2)}
+.cs-none{background:var(--red-bg);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.cs-future{background:var(--purple-bg);color:var(--purple);border:1px solid rgba(168,85,247,.2)}
+.chip-fte{font-size:.72rem;font-family:'JetBrains Mono',monospace;color:var(--text-muted)}
+.chip-link{font-size:.7rem;color:var(--accent-light);text-decoration:none;cursor:pointer}
+.chip-link:hover{text-decoration:underline}
+.chip-desc{font-size:.78rem;color:var(--text-muted);line-height:1.5;margin-top:.15rem}
+
+.counter-bar{max-width:1400px;margin:0 auto 1rem;padding:0 2rem}
+.counter-inner{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.counter{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center}
+.counter-num{font-size:2.2rem;font-weight:900;font-family:'JetBrains Mono',monospace;line-height:1.1}
+.counter-num.c-green{color:var(--green)}
+.counter-num.c-yellow{color:var(--yellow)}
+.counter-num.c-red{color:var(--red)}
+.counter-num.c-accent{color:var(--accent-light)}
+.counter-lbl{font-size:.75rem;color:var(--text-muted);margin-top:.3rem}
+
+.divider{max-width:1400px;margin:1rem auto 0;padding:0 2rem}
+.divider-line{border:none;border-top:2px solid var(--border)}
+
+.role-section{max-width:1400px;margin:0 auto 2rem;padding:0 2rem}
+.role-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.role-header{display:flex;align-items:center;gap:1.25rem;padding:1.5rem 2rem;border-bottom:1px solid var(--border)}
+.role-num{width:44px;height:44px;border-radius:10px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;flex-shrink:0}
+.role-info{flex:1}
+.role-title{font-size:1.2rem;font-weight:800;color:var(--text)}
+.role-replaces{font-size:.8rem;color:var(--accent-light);margin-top:.15rem}
+.role-meta{display:flex;gap:.5rem;flex-wrap:wrap;flex-shrink:0}
+.badge{padding:.3rem .75rem;border-radius:6px;font-size:.72rem;font-weight:600;white-space:nowrap}
+.b-fte{background:var(--green-bg);color:var(--green);border:1px solid rgba(16,185,129,.2)}
+.b-stage{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(59,130,246,.2)}
+
+.cap-table{width:100%;border-collapse:collapse}
+.cap-table th{text-align:left;padding:.55rem .75rem;font-size:.64rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);border-bottom:1px solid var(--border);background:rgba(99,102,241,.02);white-space:nowrap}
+.cap-table td{padding:.55rem .75rem;border-bottom:1px solid rgba(30,30,46,.5);font-size:.82rem;vertical-align:middle}
+.cap-table tr:last-child td{border-bottom:none}
+.cap-table tr:hover td{background:rgba(99,102,241,.03)}
+.cap-table .cap-name{color:var(--text);font-weight:500}
+.cap-table .cap-date{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--blue);font-weight:500;white-space:nowrap}
+.cap-table .cap-num{color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:.72rem;width:24px}
+.cap-table .mono-sm{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;white-space:nowrap}
+
+.status{display:inline-flex;align-items:center;gap:.3rem;padding:.15rem .5rem;border-radius:4px;font-size:.7rem;font-weight:600;white-space:nowrap}
+.s-yes{background:var(--green-bg);color:var(--green);border:1px solid rgba(16,185,129,.2)}
+.s-partial{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(234,179,8,.2)}
+.s-no{background:var(--red-bg);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+
+[contenteditable]{cursor:text;border-bottom:1px dashed rgba(99,102,241,.3);transition:background .2s,border-color .2s;border-radius:3px;padding:1px 4px;margin:-1px -4px}
+[contenteditable]:hover{background:rgba(99,102,241,.08);border-bottom-color:var(--accent-light)}
+[contenteditable]:focus{outline:none;background:rgba(99,102,241,.12);border-bottom-color:var(--accent);box-shadow:0 0 0 2px rgba(99,102,241,.15)}
+
+.summary-section{max-width:1400px;margin:2rem auto;padding:0 2rem}
+.summary-card{background:linear-gradient(135deg,rgba(16,185,129,.06),rgba(99,102,241,.06));border:1px solid rgba(99,102,241,.15);border-radius:16px;padding:2rem}
+.summary-card h2{font-size:1.4rem;font-weight:800;margin-bottom:1.25rem;color:var(--accent-light)}
+
+.anti-scope-table{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:1rem}
+.anti-scope-table th{text-align:left;padding:.6rem .75rem;font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);border-bottom:2px solid var(--border);background:rgba(99,102,241,.03)}
+.anti-scope-table td{padding:.6rem .75rem;border-bottom:1px solid var(--border);font-size:.82rem;vertical-align:top}
+.anti-scope-table tr:last-child td{border-bottom:none}
+.anti-scope-table tr:hover td{background:rgba(99,102,241,.03)}
+
+.exit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-top:1.5rem}
+.exit-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+.exit-card h4{font-size:.88rem;font-weight:700;margin-bottom:.75rem}
+.exit-card ul{list-style:none;padding:0}
+.exit-card li{font-size:.8rem;color:var(--text-sec);padding:.25rem 0;padding-left:1.2rem;position:relative}
+.exit-card li::before{content:'';position:absolute;left:0;top:.55rem;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+
+.foot{max-width:1400px;margin:0 auto;padding:2rem;font-size:.78rem;color:var(--text-muted);border-top:1px solid var(--border);text-align:center}
+
+@media(max-width:1100px){
+  .hero h1{font-size:2rem}
+  .counter-inner{grid-template-columns:repeat(2,1fr)}
+  .roles-grid{grid-template-columns:1fr}
+  .role-header{flex-wrap:wrap}
+  .role-meta{width:100%;margin-top:.5rem}
+  .l0-wrap{margin-left:-1rem;margin-right:-1rem}
+  .exit-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-badge">Corp Copilot HUB &middot; Legal Copilot 2026</div>
+  <h1>Все юридические роли vs AI-замена</h1>
+  <p class="hero-sub">Уровень 0 — верхнеуровневая аналитика по AI-сотрудникам. Уровень 1 — карта всех юридических ролей. Уровень 2 — детализация по функциям профессии. Роадмап v11, 13.04.2026.</p>
+</section>
+
+<!-- ======================================================== -->
+<!-- LEVEL 0: ВЕРХНЕУРОВНЕВАЯ АНАЛИТИКА -->
+<!-- ======================================================== -->
+<section class="sec">
+  <div class="sec-label">Уровень 0</div>
+  <h2>AI-сотрудники: сводная аналитика</h2>
+  <p class="desc">Каждый AI-сотрудник как строка. Вес в юридической функции, потенциал автоматизации, денежный эффект, измеримость, статус, MVP, риск. Цифры основаны на Thomson Reuters, Gartner Legal, CLOC, ACC и кейсах вендоров.</p>
+</section>
+
+<div class="l0-wrap">
+  <table class="l0-table">
+    <thead>
+      <tr>
+        <th>AI-сотрудник</th>
+        <th>Заменяемая роль</th>
+        <th>Агенты</th>
+        <th>Вес в Legal&nbsp;(%)&nbsp;<span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:.6" title="Доля роли в общей юридической функции. 6 AI-ролей = ~73%, остальные — роли без AI-замены">&#9432;</span></th>
+        <th>Автоматиз.&nbsp;(%)</th>
+        <th>Ден.&nbsp;эффект</th>
+        <th>Измеримость</th>
+        <th>Делаем</th>
+        <th>MVP</th>
+        <th>Риск</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="l0-name">Цифровой юрист по договорам</td>
+        <td class="l0-role">Юрист по договорам + договорной аналитик</td>
+        <td class="l0-role">LC-1 + LC-5</td>
+        <td class="mono-val">30%<sup>1</sup></td>
+        <td class="mono-val" style="color:var(--green)">60%<sup>2</sup></td>
+        <td><span class="tag tag-high">High</span></td>
+        <td><span class="tag tag-high">High</span></td>
+        <td><span class="dot dot-green"></span>Да</td>
+        <td class="mono-val" contenteditable="true">Q2 2026</td>
+        <td><span class="tag tag-med">Средний</span></td>
+      </tr>
+      <tr>
+        <td class="l0-name">Цифровой юр. консультант</td>
+        <td class="l0-role">Юрист-консультант (helpdesk)</td>
+        <td class="l0-role">LC-2</td>
+        <td class="mono-val">15%<sup>1</sup></td>
+        <td class="mono-val" style="color:var(--green)">70%<sup>3</sup></td>
+        <td><span class="tag tag-high">High</span></td>
+        <td><span class="tag tag-high">High</span></td>
+        <td><span class="dot dot-green"></span>Да</td>
+        <td class="mono-val" contenteditable="true">Q2 2026</td>
+        <td><span class="tag tag-high">Низкий</span></td>
+      </tr>
+      <tr>
+        <td class="l0-name">Цифровой аналитик документов</td>
+        <td class="l0-role">Договорной аналитик (Q&A)</td>
+        <td class="l0-role">LC-3</td>
+        <td class="mono-val">10%<sup>1</sup></td>
+        <td class="mono-val" style="color:var(--yellow)">65%<sup>*</sup></td>
+        <td><span class="tag tag-med">Medium</span></td>
+        <td><span class="tag tag-med">Medium</span></td>
+        <td><span class="dot dot-green"></span>Да</td>
+        <td class="mono-val" contenteditable="true">Q2 2026</td>
+        <td><span class="tag tag-high">Низкий</span></td>
+      </tr>
+      <tr>
+        <td class="l0-name">Цифровой компаратор</td>
+        <td class="l0-role">Legal ops (сравнение версий)</td>
+        <td class="l0-role">LC-4</td>
+        <td class="mono-val">8%<sup>1</sup></td>
+        <td class="mono-val" style="color:var(--green)">75%<sup>4</sup></td>
+        <td><span class="tag tag-med">Medium</span></td>
+        <td><span class="tag tag-high">High</span></td>
+        <td><span class="dot dot-green"></span>Да</td>
+        <td class="mono-val" contenteditable="true">Q3 2026</td>
+        <td><span class="tag tag-high">Низкий</span></td>
+      </tr>
+      <tr>
+        <td class="l0-name">Цифровой редактор текстов</td>
+        <td class="l0-role">Юридический аналитик</td>
+        <td class="l0-role">LC-6</td>
+        <td class="mono-val">5%<sup>*</sup></td>
+        <td class="mono-val" style="color:var(--yellow)">50%<sup>*</sup></td>
+        <td><span class="tag tag-med">Medium</span></td>
+        <td><span class="tag tag-low">Low</span></td>
+        <td><span class="dot dot-green"></span>Да</td>
+        <td class="mono-val" contenteditable="true">Q3 2026</td>
+        <td><span class="tag tag-med">Средний</span></td>
+      </tr>
+      <tr>
+        <td class="l0-name">Цифровой скоринг исков</td>
+        <td class="l0-role">Помощник судебного юриста</td>
+        <td class="l0-role">LC-7</td>
+        <td class="mono-val">5%<sup>*</sup></td>
+        <td class="mono-val" style="color:var(--red)">40%<sup>5</sup></td>
+        <td><span class="tag tag-med">Medium</span></td>
+        <td><span class="tag tag-low">Low</span></td>
+        <td><span class="dot dot-yellow"></span>Частично</td>
+        <td class="mono-val" contenteditable="true">Q4+ TBD</td>
+        <td><span class="tag tag-low">Высокий</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="margin-top:1.25rem;font-size:.75rem;color:var(--text-muted);line-height:1.8">
+    <div style="margin-bottom:.75rem"><span style="color:var(--yellow);font-weight:700">*</span> — гипотеза, требует валидации (нет прямых отраслевых бенчмарков для российского in-house legal; данные по text processing и litigation scoring ограничены)</div>
+    <div><strong style="color:var(--text-sec)">Источники:</strong></div>
+    <div><sup>1</sup> <strong>Вес в Legal</strong> — ACC Chief Legal Officers Survey 2024; CLOC 2024: contract management = 30-40% legal budget; Thomson Reuters Legal Dept. Operations Index: 50-60% времени юристов на рутинную/повторяемую работу. Веса калиброваны для типичного in-house юр. департамента (10-30 юристов)</div>
+    <div><sup>2</sup> <strong>Contract Review 60%</strong> — Luminance: NDA review 12 ч &rarr; минуты (Tesco); Kira Systems: 20-90% ускорение due diligence review; Deloitte: 30-50% снижение затрат на document review. McKinsey 2023: 22% юр. часов автоматизируемо текущим GenAI. Консервативная оценка для российского рынка (5 типов договоров MVP): 60%</div>
+    <div><sup>3</sup> <strong>Knowledge Q&A 70%</strong> — Thomson Reuters: 50-60% рутинных юр. вопросов решаемы AI; Harvey.ai + Allen &amp; Overy: 3x ускорение legal research (1500 юристов, 2023); CaseText CoCounsel: 10x быстрее vs manual research. С учётом RAG по ЛНА и ограничения на российское законодательство: 70%</div>
+    <div><sup>4</sup> <strong>Document Comparison 75%</strong> — Ironclad: 70-80% ускорение redline turnaround; BlackBoiler: 70% reduction в review cycles. Для структурированного diff + AI-резюме изменений: 75%</div>
+    <div><sup>5</sup> <strong>Litigation Scoring 40%</strong> — Lex Machina: 70%+ prediction accuracy (US federal, 10+ practice areas); Premonition.ai: 9B+ court records. Для российской юрисдикции данных почти нет, оценка гипотетическая: 40%</div>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- LEVEL 1: КАРТА ЮРИДИЧЕСКИХ РОЛЕЙ -->
+<!-- ======================================================== -->
+<div class="divider"><hr class="divider-line"></div>
+
+<section class="sec">
+  <div class="sec-label">Уровень 1</div>
+  <h2>Карта юридических ролей организации</h2>
+  <p class="desc">Все ключевые юридические роли по доменам. По каждой — статус AI-замены в роадмапе Legal Copilot 2026.</p>
+</section>
+
+<div class="counter-bar">
+  <div class="counter-inner">
+    <div class="counter"><div class="counter-num c-accent">18</div><div class="counter-lbl">юр. ролей всего</div></div>
+    <div class="counter"><div class="counter-num c-green">6</div><div class="counter-lbl">заменяем AI (2026)</div></div>
+    <div class="counter"><div class="counter-num c-yellow">7</div><div class="counter-lbl">потенциал</div></div>
+    <div class="counter"><div class="counter-num c-red">5</div><div class="counter-lbl">не заменяем</div></div>
+  </div>
+</div>
+
+<div class="roles-map">
+  <!-- Договорная работа -->
+  <div class="domain-group">
+    <div class="domain-label d-contract">Договорная работа (Contract Management)</div>
+    <div class="roles-grid">
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Юрист по договорам</span><span class="chip-status cs-active">AI-замена</span></div><div class="chip-desc">Анализирует входящие договоры: классификация, проверка по чек-листу, выявление рисков, протокол разногласий</div><div class="role-chip-bottom"><span class="chip-fte">50-60% FTE</span><a href="#role-1" class="chip-link">13 функций &darr;</a></div></div>
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Договорной аналитик / помощник юриста</span><span class="chip-status cs-active">AI-замена</span></div><div class="chip-desc">Готовит аналитику по договорам: Q&A по документам, сравнение версий, подготовка саммари</div><div class="role-chip-bottom"><span class="chip-fte">60-70% FTE</span><a href="#role-1" class="chip-link">объединён &darr;</a></div></div>
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Специалист по согласованию</span><span class="chip-status cs-future">Потенциал</span></div><div class="chip-desc">Координирует маршрут согласования договоров между подразделениями и контрагентами</div><div class="role-chip-bottom"><span class="chip-fte">—</span></div></div>
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Руководитель договорного направления</span><span class="chip-status cs-none">Не заменяем</span></div><div class="chip-desc">Управляет командой, формирует политики, принимает решения по нестандартным условиям</div><div class="role-chip-bottom"><span class="chip-fte">—</span></div></div>
+    </div>
+  </div>
+  <!-- Комплаенс -->
+  <div class="domain-group">
+    <div class="domain-label d-compliance">Комплаенс и регуляторика (Compliance & Regulatory)</div>
+    <div class="roles-grid">
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Compliance officer</span><span class="chip-status cs-future">Потенциал</span></div><div class="chip-desc">Обеспечивает соответствие деятельности компании требованиям регуляторов и внутренним политикам</div><div class="role-chip-bottom"><span class="chip-fte">—</span></div></div>
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Специалист по ПОД/ФТ (AML)</span><span class="chip-status cs-future">Потенциал</span></div><div class="chip-desc">Проверяет контрагентов, мониторит транзакции, формирует отчётность для ЦБ</div><div class="role-chip-bottom"><span class="chip-fte">—</span></div></div>
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Специалист по персональным данным (DPO)</span><span class="chip-status cs-future">Потенциал</span></div><div class="chip-desc">Контролирует обработку ПДн, ведёт реестры, готовит уведомления в Роскомнадзор</div><div class="role-chip-bottom"><span class="chip-fte">—</span></div></div>
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Регуляторный юрист</span><span class="chip-status cs-none">Не заменяем</span></div><div class="chip-desc">Взаимодействует с регуляторами, анализирует изменения законодательства, готовит позиции</div><div class="role-chip-bottom"><span class="chip-fte">—</span></div></div>
+    </div>
+  </div>
+  <!-- Корпоративное право -->
+  <div class="domain-group">
+    <div class="domain-label d-corporate">Корпоративное право (Corporate)</div>
+    <div class="roles-grid">
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Корпоративный юрист</span><span class="chip-status cs-future">Потенциал</span></div><div class="chip-desc">Сопровождает корпоративные процедуры: реорганизация, эмиссии, раскрытие информации</div><div class="role-chip-bottom"><span class="chip-fte">—</span></div></div>
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Корпоративный секретарь</span><span class="chip-status cs-none">Не заменяем</span></div><div class="chip-desc">Организует заседания органов управления, ведёт протоколы, обеспечивает governance</div><div class="role-chip-bottom"><span class="chip-fte">—</span></div></div>
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">M&A юрист</span><span class="chip-status cs-none">Не заменяем</span></div><div class="chip-desc">Структурирует сделки, проводит due diligence, готовит SPA/SHA, ведёт переговоры</div><div class="role-chip-bottom"><span class="chip-fte">—</span></div></div>
+    </div>
+  </div>
+  <!-- Судебная работа -->
+  <div class="domain-group">
+    <div class="domain-label d-litigation">Судебная и претензионная работа (Litigation)</div>
+    <div class="roles-grid">
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Судебный юрист</span><span class="chip-status cs-future">Потенциал</span></div><div class="chip-desc">Представляет компанию в судах, готовит процессуальные документы, выстраивает стратегию</div><div class="role-chip-bottom"><span class="chip-fte">—</span></div></div>
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Помощник судебного юриста</span><span class="chip-status cs-active">AI-замена</span></div><div class="chip-desc">Анализирует судебную практику, оценивает перспективы исков, готовит аналитические справки</div><div class="role-chip-bottom"><span class="chip-fte">30-40% FTE</span><a href="#role-6" class="chip-link">10 функций &darr;</a></div></div>
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Специалист по досудебке / претензиям</span><span class="chip-status cs-future">Потенциал</span></div><div class="chip-desc">Ведёт претензионную работу: подготовка претензий, ответы, контроль сроков, урегулирование</div><div class="role-chip-bottom"><span class="chip-fte">—</span></div></div>
+    </div>
+  </div>
+  <!-- IP -->
+  <div class="domain-group">
+    <div class="domain-label d-ip">Интеллектуальная собственность (IP)</div>
+    <div class="roles-grid">
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">IP counsel / патентный поверенный</span><span class="chip-status cs-none">Не заменяем</span></div><div class="chip-desc">Регистрирует патенты и ТЗ, защищает IP в судах, проводит патентные исследования</div><div class="role-chip-bottom"><span class="chip-fte">—</span></div></div>
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Специалист по товарным знакам</span><span class="chip-status cs-future">Потенциал</span></div><div class="chip-desc">Ведёт портфель ТЗ: мониторинг, продление, оппозиции, лицензирование</div><div class="role-chip-bottom"><span class="chip-fte">—</span></div></div>
+    </div>
+  </div>
+  <!-- Legal Ops -->
+  <div class="domain-group">
+    <div class="domain-label d-legalops">Юридический операционный блок (Legal Ops)</div>
+    <div class="roles-grid">
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Legal operations manager</span><span class="chip-status cs-active">AI-замена</span></div><div class="chip-desc">Оптимизирует процессы юр. департамента: workflow, метрики, технологии, бюджет</div><div class="role-chip-bottom"><span class="chip-fte">40-50% FTE</span><a href="#role-4" class="chip-link">10 функций &darr;</a></div></div>
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Юрист-консультант (внутренний helpdesk)</span><span class="chip-status cs-active">AI-замена</span></div><div class="chip-desc">Отвечает на типовые юр. вопросы сотрудников: ЛНА, регламенты, порядок согласования</div><div class="role-chip-bottom"><span class="chip-fte">60-70% FTE</span><a href="#role-2" class="chip-link">10 функций &darr;</a></div></div>
+      <div class="role-chip"><div class="role-chip-top"><span class="role-chip-name">Юридический аналитик</span><span class="chip-status cs-active">AI-замена</span></div><div class="chip-desc">Обрабатывает тексты: упрощение юр. языка, перефразирование, саммари, перевод стиля</div><div class="role-chip-bottom"><span class="chip-fte">40-50% FTE</span><a href="#role-5" class="chip-link">10 функций &darr;</a></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- LEVEL 2: ДЕТАЛИЗАЦИЯ ПО ФУНКЦИЯМ -->
+<!-- ======================================================== -->
+<div class="divider"><hr class="divider-line"></div>
+
+<section class="sec">
+  <div class="sec-label">Уровень 2</div>
+  <h2>Детализация: функции каждой роли</h2>
+  <p class="desc">6 ролей с AI-заменой. Каждая функция: вес, потенциал автоматизации, денежный эффект, измеримость, статус, MVP, риск. Функции привязаны к агентам роадмапа LC-1..LC-7.</p>
+</section>
+
+<!-- 1. ЦИФРОВОЙ ЮРИСТ ПО ДОГОВОРАМ -->
+<div class="role-section" id="role-1">
+  <div class="role-card">
+    <div class="role-header">
+      <div class="role-num">1</div>
+      <div class="role-info">
+        <div class="role-title">Цифровой юрист по договорам</div>
+        <div class="role-replaces">AI-замена: Юрист по договорам + Договорной аналитик | LC-1 Contract Review + LC-5 Document Draft</div>
+      </div>
+      <div class="role-meta"><span class="badge b-fte">50-60% FTE</span><span class="badge b-stage">Q2 2026</span></div>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="cap-table">
+      <thead><tr><th>#</th><th>Функция профессии</th><th>Вес</th><th>Автоматиз.</th><th>Ден. эффект</th><th>Измеримость</th><th>Делаем</th><th>MVP</th><th>Риск</th></tr></thead>
+      <tbody>
+        <tr><td class="cap-num">1</td><td class="cap-name">Классификация типа договора</td><td class="mono-sm">4%</td><td class="mono-sm" style="color:var(--green)">90%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">2</td><td class="cap-name">Общий анализ (стороны, предмет, суммы, сроки)</td><td class="mono-sm">12%</td><td class="mono-sm" style="color:var(--green)">85%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">3</td><td class="cap-name">Проверка по чек-листу (по типу договора)</td><td class="mono-sm">16%</td><td class="mono-sm" style="color:var(--green)">75%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">4</td><td class="cap-name">Проверка по общим правилам (вне чек-листа)</td><td class="mono-sm">8%</td><td class="mono-sm" style="color:var(--green)">70%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">5</td><td class="cap-name">Проверка на соответствие ЛНА</td><td class="mono-sm">8%</td><td class="mono-sm" style="color:var(--yellow)">65%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">6</td><td class="cap-name">Выявление рисковых клаузул</td><td class="mono-sm">12%</td><td class="mono-sm" style="color:var(--yellow)">60%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">7</td><td class="cap-name">Формирование протокола разногласий</td><td class="mono-sm">8%</td><td class="mono-sm" style="color:var(--yellow)">55%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">8</td><td class="cap-name">Проверка актуальности ссылок на нормы</td><td class="mono-sm">4%</td><td class="mono-sm" style="color:var(--green)">70%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">9</td><td class="cap-name">Сравнение версий договора (redline)</td><td class="mono-sm">4%</td><td class="mono-sm" style="color:var(--green)">75%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-partial">Частично</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">10</td><td class="cap-name">Генерация договора по шаблону</td><td class="mono-sm">10%</td><td class="mono-sm" style="color:var(--yellow)">55%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">11</td><td class="cap-name">Генерация допсоглашений</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--yellow)">50%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-partial">Частично</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">12</td><td class="cap-name">Выгрузка готового документа в DOCX</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--green)">80%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2-Q3</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">13</td><td class="cap-name">Обработка сканов / фото договоров (OCR)</td><td class="mono-sm">4%</td><td class="mono-sm" style="color:var(--yellow)">60%</td><td><span class="tag tag-low">Low</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- 2. ЦИФРОВОЙ ЮР. КОНСУЛЬТАНТ -->
+<div class="role-section" id="role-2">
+  <div class="role-card">
+    <div class="role-header">
+      <div class="role-num">2</div>
+      <div class="role-info">
+        <div class="role-title">Цифровой юридический консультант</div>
+        <div class="role-replaces">AI-замена: Юрист-консультант (внутренний helpdesk) | LC-2 Knowledge Q&A</div>
+      </div>
+      <div class="role-meta"><span class="badge b-fte">60-70% FTE</span><span class="badge b-stage">Q2 2026</span></div>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="cap-table">
+      <thead><tr><th>#</th><th>Функция профессии</th><th>Вес</th><th>Автоматиз.</th><th>Ден. эффект</th><th>Измеримость</th><th>Делаем</th><th>MVP</th><th>Риск</th></tr></thead>
+      <tbody>
+        <tr><td class="cap-num">1</td><td class="cap-name">Ответы на типовые юр. вопросы (по ЛНА, регламентам)</td><td class="mono-sm">25%</td><td class="mono-sm" style="color:var(--green)">85%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">2</td><td class="cap-name">Консультации по публичному законодательству</td><td class="mono-sm">15%</td><td class="mono-sm" style="color:var(--yellow)">65%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-partial">Частично</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">3</td><td class="cap-name">Цитирование источников (документ + пункт)</td><td class="mono-sm">10%</td><td class="mono-sm" style="color:var(--green)">80%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">4</td><td class="cap-name">Маршрутизация сложных запросов к профильному юристу</td><td class="mono-sm">10%</td><td class="mono-sm" style="color:var(--green)">75%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-partial">Частично</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">5</td><td class="cap-name">Контекстный диалог (follow-up вопросы)</td><td class="mono-sm">10%</td><td class="mono-sm" style="color:var(--green)">70%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-partial">Частично</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">6</td><td class="cap-name">Выбор юрисдикции / источника (ЛНА vs законодательство)</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--yellow)">60%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">7</td><td class="cap-name">Индексация и обновление базы знаний</td><td class="mono-sm">10%</td><td class="mono-sm" style="color:var(--green)">75%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">8</td><td class="cap-name">Мониторинг галлюцинаций и latency</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--yellow)">60%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">9</td><td class="cap-name">Экспорт ответа с источниками в DOCX/PDF</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--green)">70%</td><td><span class="tag tag-low">Low</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">10</td><td class="cap-name">Сбор обратной связи (thumbs up/down)</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--green)">80%</td><td><span class="tag tag-low">Low</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- 3. ЦИФРОВОЙ АНАЛИТИК ДОКУМЕНТОВ -->
+<div class="role-section" id="role-3">
+  <div class="role-card">
+    <div class="role-header">
+      <div class="role-num">3</div>
+      <div class="role-info">
+        <div class="role-title">Цифровой аналитик документов</div>
+        <div class="role-replaces">AI-замена: Договорной аналитик (Q&A по документам) | LC-3 Document Q&A</div>
+      </div>
+      <div class="role-meta"><span class="badge b-fte">40-50% FTE</span><span class="badge b-stage">Q2 2026</span></div>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="cap-table">
+      <thead><tr><th>#</th><th>Функция профессии</th><th>Вес</th><th>Автоматиз.</th><th>Ден. эффект</th><th>Измеримость</th><th>Делаем</th><th>MVP</th><th>Риск</th></tr></thead>
+      <tbody>
+        <tr><td class="cap-num">1</td><td class="cap-name">Q&A по загруженному документу</td><td class="mono-sm">25%</td><td class="mono-sm" style="color:var(--green)">75%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">2</td><td class="cap-name">Вопрос к выделенному пункту: смысл / риск</td><td class="mono-sm">15%</td><td class="mono-sm" style="color:var(--green)">70%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">3</td><td class="cap-name">Контекст = договор целиком + анализ рисков</td><td class="mono-sm">15%</td><td class="mono-sm" style="color:var(--yellow)">65%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">4</td><td class="cap-name">Ссылки на конкретные пункты в ответах</td><td class="mono-sm">10%</td><td class="mono-sm" style="color:var(--green)">80%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-partial">Частично</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">5</td><td class="cap-name">Типовые вопросы-подсказки по типу документа</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--green)">85%</td><td><span class="tag tag-low">Low</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">6</td><td class="cap-name">История вопросов по документу в сессии</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--green)">75%</td><td><span class="tag tag-low">Low</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">7</td><td class="cap-name">Multi-document Q&A (несколько файлов)</td><td class="mono-sm">10%</td><td class="mono-sm" style="color:var(--yellow)">55%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-low">Low</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">8</td><td class="cap-name">Сравнительные ответы между документами</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--yellow)">50%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-low">Low</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">9</td><td class="cap-name">Сохранение Q&A-сессий для повторного просмотра</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--green)">70%</td><td><span class="tag tag-low">Low</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">10</td><td class="cap-name">Ручная оценка релевантности с юристами</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--yellow)">50%</td><td><span class="tag tag-low">Low</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q2 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- 4. ЦИФРОВОЙ КОМПАРАТОР -->
+<div class="role-section" id="role-4">
+  <div class="role-card">
+    <div class="role-header">
+      <div class="role-num">4</div>
+      <div class="role-info">
+        <div class="role-title">Цифровой компаратор документов</div>
+        <div class="role-replaces">AI-замена: Legal operations manager (сравнение версий) | LC-4 Document Comparison</div>
+      </div>
+      <div class="role-meta"><span class="badge b-fte">40-50% FTE</span><span class="badge b-stage">Q3 2026</span></div>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="cap-table">
+      <thead><tr><th>#</th><th>Функция профессии</th><th>Вес</th><th>Автоматиз.</th><th>Ден. эффект</th><th>Измеримость</th><th>Делаем</th><th>MVP</th><th>Риск</th></tr></thead>
+      <tbody>
+        <tr><td class="cap-num">1</td><td class="cap-name">Загрузка двух версий документа (DOCX/PDF)</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--green)">90%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">2</td><td class="cap-name">Diff с подсветкой: добавлено / удалено / изменено</td><td class="mono-sm">20%</td><td class="mono-sm" style="color:var(--green)">85%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">3</td><td class="cap-name">AI-резюме ключевых изменений</td><td class="mono-sm">15%</td><td class="mono-sm" style="color:var(--green)">75%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">4</td><td class="cap-name">Навигация по списку изменений (jump to change)</td><td class="mono-sm">10%</td><td class="mono-sm" style="color:var(--green)">80%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">5</td><td class="cap-name">Оценка существенности изменения (minor/material/critical)</td><td class="mono-sm">15%</td><td class="mono-sm" style="color:var(--yellow)">60%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-partial">Частично</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">6</td><td class="cap-name">UX-тест с юристами: читаемость diff</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--yellow)">50%</td><td><span class="tag tag-low">Low</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">7</td><td class="cap-name">Сравнение 3+ версий — таймлайн редакций</td><td class="mono-sm">10%</td><td class="mono-sm" style="color:var(--yellow)">55%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">8</td><td class="cap-name">Табличное сравнение ключевых условий</td><td class="mono-sm">10%</td><td class="mono-sm" style="color:var(--yellow)">60%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">9</td><td class="cap-name">Экспорт протокола разногласий</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--yellow)">65%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">10</td><td class="cap-name">Тест точности diff на реальных парах документов</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--yellow)">50%</td><td><span class="tag tag-low">Low</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- 5. ЦИФРОВОЙ РЕДАКТОР ТЕКСТОВ -->
+<div class="role-section" id="role-5">
+  <div class="role-card">
+    <div class="role-header">
+      <div class="role-num">5</div>
+      <div class="role-info">
+        <div class="role-title">Цифровой редактор юридических текстов</div>
+        <div class="role-replaces">AI-замена: Юридический аналитик (text processing) | LC-6 Text Processing</div>
+      </div>
+      <div class="role-meta"><span class="badge b-fte">40-50% FTE</span><span class="badge b-stage">Q3 2026</span></div>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="cap-table">
+      <thead><tr><th>#</th><th>Функция профессии</th><th>Вес</th><th>Автоматиз.</th><th>Ден. эффект</th><th>Измеримость</th><th>Делаем</th><th>MVP</th><th>Риск</th></tr></thead>
+      <tbody>
+        <tr><td class="cap-num">1</td><td class="cap-name">Улучшение юридических формулировок и стиля</td><td class="mono-sm">20%</td><td class="mono-sm" style="color:var(--yellow)">55%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-low">Low</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">2</td><td class="cap-name">Перефразирование: мягче / жёстче / нейтральнее / короче</td><td class="mono-sm">15%</td><td class="mono-sm" style="color:var(--yellow)">60%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-low">Low</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">3</td><td class="cap-name">Саммари пункта или всего документа</td><td class="mono-sm">15%</td><td class="mono-sm" style="color:var(--green)">70%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">4</td><td class="cap-name">Упрощение юр. текста для бизнеса (plain language)</td><td class="mono-sm">15%</td><td class="mono-sm" style="color:var(--yellow)">60%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">5</td><td class="cap-name">Inline-режим: выделить текст &rarr; выбрать действие</td><td class="mono-sm">10%</td><td class="mono-sm" style="color:var(--yellow)">55%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">6</td><td class="cap-name">Перевод фрагмента с сохранением юр. структуры</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--yellow)">50%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-low">Low</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">7</td><td class="cap-name">Двуязычный договор (ru/en параллельные колонки)</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--red)">35%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-low">Low</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-low">Высокий</span></td></tr>
+        <tr><td class="cap-num">8</td><td class="cap-name">Перевод полного документа с сохранением форматирования</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--red)">30%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-low">Low</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+</td><td><span class="tag tag-low">Высокий</span></td></tr>
+        <tr><td class="cap-num">9</td><td class="cap-name">Batch-режим: обработка нескольких документов</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--yellow)">45%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">10</td><td class="cap-name">Executive Summary для руководства</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--yellow)">65%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-yes">Да</span></td><td class="cap-date" contenteditable="true">Q3 2026</td><td><span class="tag tag-high">Низкий</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- 6. ЦИФРОВОЙ СКОРИНГ ИСКОВ -->
+<div class="role-section" id="role-6">
+  <div class="role-card">
+    <div class="role-header">
+      <div class="role-num">6</div>
+      <div class="role-info">
+        <div class="role-title">Цифровой скоринг судебных исков</div>
+        <div class="role-replaces">AI-замена: Помощник судебного юриста (аналитика) | LC-7 Скоринг исков</div>
+      </div>
+      <div class="role-meta"><span class="badge b-fte">30-40% FTE</span><span class="badge b-stage">Q4+ TBD</span></div>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="cap-table">
+      <thead><tr><th>#</th><th>Функция профессии</th><th>Вес</th><th>Автоматиз.</th><th>Ден. эффект</th><th>Измеримость</th><th>Делаем</th><th>MVP</th><th>Риск</th></tr></thead>
+      <tbody>
+        <tr><td class="cap-num">1</td><td class="cap-name">Анализ судебной практики по категории спора</td><td class="mono-sm">20%</td><td class="mono-sm" style="color:var(--yellow)">50%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+ TBD</td><td><span class="tag tag-low">Высокий</span></td></tr>
+        <tr><td class="cap-num">2</td><td class="cap-name">Оценка вероятности выигрыша / проигрыша</td><td class="mono-sm">15%</td><td class="mono-sm" style="color:var(--red)">35%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-low">Low</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+ TBD</td><td><span class="tag tag-low">Высокий</span></td></tr>
+        <tr><td class="cap-num">3</td><td class="cap-name">Анализ позиции суда (конкретный суд / судья)</td><td class="mono-sm">10%</td><td class="mono-sm" style="color:var(--red)">30%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-low">Low</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+ TBD</td><td><span class="tag tag-low">Высокий</span></td></tr>
+        <tr><td class="cap-num">4</td><td class="cap-name">Подбор релевантных прецедентов</td><td class="mono-sm">15%</td><td class="mono-sm" style="color:var(--yellow)">55%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+ TBD</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">5</td><td class="cap-name">Оценка суммы потенциальных убытков</td><td class="mono-sm">10%</td><td class="mono-sm" style="color:var(--red)">25%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-low">Low</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+ TBD</td><td><span class="tag tag-low">Высокий</span></td></tr>
+        <tr><td class="cap-num">6</td><td class="cap-name">Формирование аналитической справки по иску</td><td class="mono-sm">10%</td><td class="mono-sm" style="color:var(--yellow)">50%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+ TBD</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">7</td><td class="cap-name">Рекомендация стратегии (мировое / суд / отзыв)</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--red)">20%</td><td><span class="tag tag-high">High</span></td><td><span class="tag tag-low">Low</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">—</td><td><span class="tag tag-low">Высокий</span></td></tr>
+        <tr><td class="cap-num">8</td><td class="cap-name">Мониторинг сроков процессуальных действий</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--yellow)">60%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-high">High</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+ TBD</td><td><span class="tag tag-high">Низкий</span></td></tr>
+        <tr><td class="cap-num">9</td><td class="cap-name">Интеграция с базами судебных актов</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--yellow)">45%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">Q4+ TBD</td><td><span class="tag tag-med">Средний</span></td></tr>
+        <tr><td class="cap-num">10</td><td class="cap-name">Отчёт для руководства по портфелю исков</td><td class="mono-sm">5%</td><td class="mono-sm" style="color:var(--yellow)">45%</td><td><span class="tag tag-med">Medium</span></td><td><span class="tag tag-med">Medium</span></td><td><span class="status s-no">Нет</span></td><td class="cap-date" contenteditable="true">—</td><td><span class="tag tag-med">Средний</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- ANTI-SCOPE -->
+<!-- ======================================================== -->
+<div class="divider"><hr class="divider-line"></div>
+
+<section class="sec">
+  <div class="sec-label">Anti-scope</div>
+  <h2>Чего мы НЕ делаем в MVP и почему</h2>
+  <p class="desc">Из роадмапа v11 (13.04.2026). Осознанные решения по границам MVP — каждое обосновано.</p>
+</section>
+
+<div style="max-width:1400px;margin:0 auto;padding:0 2rem 2rem;overflow-x:auto">
+  <table class="anti-scope-table">
+    <thead><tr><th>Функция</th><th>Почему не в MVP</th><th>Когда</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600">Сравнение версий</td><td>Не core use case для первого пилота. Можно использовать стандартный diff</td><td><span class="tag tag-med">Этап 2</span></td></tr>
+      <tr><td style="font-weight:600">Перевод документов</td><td>Не критичен для пилота на российском рынке</td><td><span class="tag tag-med">Этап 2</span></td></tr>
+      <tr><td style="font-weight:600">OCR для сканов</td><td>Большинство входящих договоров — цифровые DOCX/PDF. Сканы = edge case</td><td><span class="tag tag-med">Этап 2</span></td></tr>
+      <tr><td style="font-weight:600">Текстовый редактор с AI-сайдбаром</td><td>Очень сложная фича (аналог Google Docs). Inline-редактирование достаточно</td><td><span class="tag tag-low">Этап 3</span></td></tr>
+      <tr><td style="font-weight:600">Интеграция с СЭД</td><td>Для MVP достаточно загрузки файлов. Интеграция = работа с инфрой заказчика</td><td><span class="tag tag-low">Этап 3</span></td></tr>
+      <tr><td style="font-weight:600">Интеграция с СПС Гарант</td><td>Нет API. Требует RPA или файлового обмена. Для MVP — ссылки из внутренней базы</td><td><span class="tag tag-low">Этап 3</span></td></tr>
+      <tr><td style="font-weight:600">Скоринг судебных исков</td><td>Требует отдельного датасета (судебная практика). Другая персона</td><td><span class="tag tag-low">Этап 3</span></td></tr>
+      <tr><td style="font-weight:600">Плагин в Word</td><td>Осознанное решение: фокус на собственном веб-интерфейсе для контроля UX</td><td style="color:var(--text-muted)">Нет в roadmap</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ======================================================== -->
+<!-- EXIT CRITERIA -->
+<!-- ======================================================== -->
+<div class="divider"><hr class="divider-line"></div>
+
+<section class="sec">
+  <div class="sec-label">Exit Criteria</div>
+  <h2>Критерии выхода по фазам</h2>
+  <p class="desc">Из роадмапа v11. Каждая фаза имеет чёткие метрики для перехода к следующему этапу.</p>
+</section>
+
+<div style="max-width:1400px;margin:0 auto;padding:0 2rem 2rem">
+  <div class="exit-grid">
+    <div class="exit-card" style="border-left:3px solid var(--text-muted)">
+      <h4 style="color:var(--text-muted)">Phase 0: Валидация (2 недели)</h4>
+      <ul>
+        <li>Golden Set ready: 20-25 договоров (4-5 на каждый из 5 типов)</li>
+        <li>Recall &ge; 70% на ручном прогоне</li>
+        <li>5 чек-листов утверждены юристом пилота</li>
+        <li>12 формулировок: DRAFT &rarr; VERIFIED</li>
+      </ul>
+    </div>
+    <div class="exit-card" style="border-left:3px solid var(--green)">
+      <h4 style="color:var(--green)">Этап 1: MVP (Q2 2026, 4 недели)</h4>
+      <ul>
+        <li>Recall &ge; 90% (critical), &ge; 80% (all)</li>
+        <li>Precision &ge; 80%</li>
+        <li>5 типов договоров обрабатываются</li>
+        <li>Q&A по базе знаний работает</li>
+        <li>Track Changes обрабатывается</li>
+        <li>Inline-редактирование формулировок</li>
+      </ul>
+    </div>
+    <div class="exit-card" style="border-left:3px solid var(--blue)">
+      <h4 style="color:var(--blue)">Этап 2 (Q2-Q3 2026, 12 недель)</h4>
+      <ul>
+        <li>12+ типов договоров</li>
+        <li>NPS &ge; 30</li>
+        <li>WAU &ge; 70% юристов пилота</li>
+        <li>Feedback loop работает</li>
+      </ul>
+    </div>
+    <div class="exit-card" style="border-left:3px solid var(--purple)">
+      <h4 style="color:var(--purple)">Этап 3 (Q4 2026+)</h4>
+      <ul>
+        <li>Интеграция с &ge;1 СЭД</li>
+        <li>Генерация &ge;3 типов документов</li>
+        <li>Скоринг MVP</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- ИТОГО -->
+<!-- ======================================================== -->
+<div class="summary-section">
+  <div class="summary-card">
+    <h2>Итого по всем AI-сотрудникам</h2>
+    <p style="font-size:.88rem;color:var(--text-sec);line-height:1.7;margin-top:1rem">
+      <strong style="color:var(--text)">18 юридических ролей</strong> в организации &rarr; <strong style="color:var(--green)">6</strong> получают AI-замену в 2026, <strong style="color:var(--yellow)">7</strong> — потенциал, <strong style="color:var(--red)">5</strong> остаются за человеком.<br>
+      По 6 заменяемым ролям: <strong style="color:var(--green)">63 функции</strong> описаны, из них покрыто роадмапом: <strong style="color:var(--green)">34 делаем</strong>, <strong style="color:var(--yellow)">6 частично</strong>, <strong style="color:var(--red)">23 не покрыто</strong>.<br>
+      Самый высокий потенциал автоматизации: <strong style="color:var(--green)">Document Comparison (75%)</strong> и <strong style="color:var(--green)">Knowledge Q&A (70%)</strong>.<br>
+      Самый низкий: <strong style="color:var(--red)">Скоринг исков (40%)</strong> — TBD, требует отдельного датасета судебной практики, высокий риск.<br>
+      <strong style="color:var(--accent-light)">Ключевой AI-сотрудник:</strong> Цифровой юрист по договорам (LC-1 + LC-5) — анализ + составление, 30% юр. функции, MVP Q2 2026.
+    </p>
+  </div>
+</div>
+
+<footer class="foot">
+  Legal &rarr; AI: Карта замены юридических ролей &middot; Corp Copilot HUB &middot; Роадмап v11 (13.04.2026) &middot; Уровень 0: сводная аналитика &middot; Уровень 1: все юр. роли &middot; Уровень 2: детализация по функциям &middot; Апрель 2026
+</footer>
+
+<script>
+(function(){
+  var STORAGE_KEY = 'legal_ai_matrix_edits_v1';
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e){ saved = {}; }
+
+  var cells = document.querySelectorAll('[contenteditable="true"]');
+  cells.forEach(function(cell, i){
+    var id = 'cell_' + i;
+    cell.setAttribute('data-edit-id', id);
+    if (saved[id] !== undefined) cell.textContent = saved[id];
+    cell.addEventListener('blur', function(){
+      var data = {};
+      try { data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e){}
+      data[id] = cell.textContent;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    });
+  });
+
+  var btn = document.createElement('button');
+  btn.textContent = '\u21BA \u0421\u0431\u0440\u043E\u0441\u0438\u0442\u044C \u043C\u043E\u0438 \u043F\u0440\u0430\u0432\u043A\u0438';
+  btn.style.cssText = 'position:fixed;bottom:16px;right:16px;background:rgba(99,102,241,.15);color:#a5b4fc;border:1px solid rgba(99,102,241,.4);padding:8px 14px;border-radius:8px;font-family:Onest,sans-serif;font-size:.78rem;cursor:pointer;backdrop-filter:blur(8px);z-index:1000';
+  btn.addEventListener('mouseenter', function(){ btn.style.background='rgba(99,102,241,.25)'; });
+  btn.addEventListener('mouseleave', function(){ btn.style.background='rgba(99,102,241,.15)'; });
+  btn.addEventListener('click', function(){
+    if (confirm('\u0421\u0431\u0440\u043E\u0441\u0438\u0442\u044C \u0432\u0441\u0435 \u0432\u0430\u0448\u0438 \u043F\u0440\u0430\u0432\u043A\u0438 \u0441\u0440\u043E\u043A\u043E\u0432 MVP \u043A \u0438\u0441\u0445\u043E\u0434\u043D\u044B\u043C \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u044F\u043C?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+  });
+  document.body.appendChild(btn);
+})();
+</script>
+</body>
+</html>
